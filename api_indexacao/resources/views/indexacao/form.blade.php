@@ -69,9 +69,20 @@
                 <div class="title m-b-md">
                     Serviço de Indexação
                 </div>
-
-                <div class="links">
-                    <a href="{{ route('indexacao.form') }}">Indexar Arquivo</a>
+                <div class="card-body">
+                    <h5 class="card-title">Formulário de Indexação</h5>
+                    <form action="{{ route('indexacao.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="position-relative form-group">
+                                    <label for="exampleEmail11" class="">Arquivo:</label>
+                                    <input name="file" id="file" placeholder="with a placeholder" type="file" class="form-control">
+                                    <input type="submit" class="mt-2 btn btn-primary" value="Indexar">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

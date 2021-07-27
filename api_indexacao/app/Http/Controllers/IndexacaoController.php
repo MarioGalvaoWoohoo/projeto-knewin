@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Traits\NoticiaServiceTrait;
 
-class NoticiaController extends Controller
+class IndexacaoController extends Controller
 {
 
     use NoticiaServiceTrait;
@@ -17,7 +17,7 @@ class NoticiaController extends Controller
      */
     public function index()
     {
-        //
+        return view('indexacao/form');
     }
 
     /**
@@ -36,19 +36,36 @@ class NoticiaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function recebeNoticiasAPI(Request $request)
+    public function store(Request $request)
     {
-        $dados_json = $request->post();
-        echo json_decode($dados_json);
-        foreach ($dados_json as $key => $value) {
-            echo $value;
-        }
-
-        dd($dados);
-        $this->indexacaoNoticiasTrait($request->post());
+        $arquivo = $request->file("file");
         
-        die();
-        return Response(["msg" => "Teste"]);
+        $json_file = file_get_contents($arquivo);  
+        
+        $dados_decodificados = json_decode($json_file);
+        $dados = $this->indexacaoNoticiasTrait($dados_decodificados);
+        
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'http://nginx/api/indexacao/recebeNoticias',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => json_encode($dados_decodificados)
+        ));
+        
+        $response = curl_exec($curl);
+        
+        curl_close($curl);
+        echo $response;
+        
+        // return $this->indexacaoNoticiasTrait($dados_decodificados);
+
     }
 
     /**

@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['prefix' => 'indexacao'], function(){
+    Route::get('/form', 'IndexacaoController@index')->name('indexacao.form');
+    Route::post('/store', 'IndexacaoController@store')->name('indexacao.store');
+    // Route::post('/register', 'DoctorController@registerDoctorAPI');
+});
