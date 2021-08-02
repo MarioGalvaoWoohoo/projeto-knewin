@@ -2,13 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use Elasticsearch\Client;
 use Illuminate\Http\Request;
+use Elasticsearch\ClientBuilder;
 use App\Traits\NoticiaServiceTrait;
 
 class NoticiaController extends Controller
 {
 
     use NoticiaServiceTrait;
+
+    protected $elasticParams = [];
+    private $client;
+
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+
+        $client = ClientBuilder::create()->setHosts(['elasticsearch:9200'])->build();
+        
+        $this->elasticParams['index'] = env('ES_INDEX');
+        $this->elasticParams['type'] = 'noticias';
+    }
 
     /**
      * Display a listing of the resource.
@@ -17,17 +32,15 @@ class NoticiaController extends Controller
      */
     public function index()
     {
-        //
+        $noticias = $this->client->search(['index' => env('ES_INDEX'), 'type' => 'noticias']);
+        die();
+        return view('noticias/listaNoticias', compact('noticias'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    
+    public function getNoticiasAPI()
     {
-        //
+        return $this->getAllNewsTrait();
     }
 
     /**
@@ -38,17 +51,9 @@ class NoticiaController extends Controller
      */
     public function recebeNoticiasAPI(Request $request)
     {
-        $dados_json = $request->post();
-        echo json_decode($dados_json);
-        foreach ($dados_json as $key => $value) {
-            echo $value;
-        }
-
-        dd($dados);
-        $this->indexacaoNoticiasTrait($request->post());
+        $noticias = $request->all();
         
-        die();
-        return Response(["msg" => "Teste"]);
+        return $this->registerNewsTrait($noticias);
     }
 
     /**

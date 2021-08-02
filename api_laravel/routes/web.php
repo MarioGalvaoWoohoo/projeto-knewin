@@ -17,4 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/elastic', 'ElasticSearchController@index');
+Route::get('/elastic', 'ElasticSearchController@index')->name('elastic.search');
+Route::get('/listaNoticias', 'NoticiaController@index')->name('lista.noticias');

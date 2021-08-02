@@ -67,29 +67,14 @@
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                    Serviço de Indexação
+                           API - Noticias <br> Listagem completa de notícias
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">Formulário de Indexação</h5>
-                    <form action="{{ route('indexacao.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-row">
-                            <div class="col-md-6">
-                                <div class="position-relative form-group">
-                                    <label for="exampleEmail11" class="">Arquivo:</label>
-                                    <input name="arquivo" id="file" placeholder="with a placeholder" type="file" class="form-control">
-                                    <input type="submit" class="mt-2 btn btn-primary" value="Indexar">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+
+                <div class="links">
+                    <a href="{{ route('elastic.search') }}">Elastic Search</a>
+                    <a href="{{ route('lista.noticias') }}">Noticias Postgres</a>
+                    <a href="https://laracasts.com">Laracasts</a>
                 </div>
-                <br clear="all">
-                @if(isset($errors))
-                    <div class="alert alert-danger">
-                        {{ $errors }}
-                    </div>
-                @endif
             </div>
         </div>
     </body>

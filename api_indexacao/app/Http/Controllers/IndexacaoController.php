@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Traits\NoticiaServiceTrait;
+use Illuminate\Support\Facades\Http;
 
 class IndexacaoController extends Controller
 {
 
     use NoticiaServiceTrait;
-
+    
     /**
      * Display a listing of the resource.
      *
@@ -38,33 +39,31 @@ class IndexacaoController extends Controller
      */
     public function store(Request $request)
     {
-        $arquivo = $request->file("file");
-        
-        $json_file = file_get_contents($arquivo);  
-        
-        $dados_decodificados = json_decode($json_file);
-        $dados = $this->indexacaoNoticiasTrait($dados_decodificados);
-        
-        $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://nginx/api/indexacao/recebeNoticias',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => json_encode($dados_decodificados)
-        ));
+        $validatedData = $request->validate([
+            'arquivo' => 'required'
+        ]);
+
+        $arquivo = $request->file("arquivo"); 
         
-        $response = curl_exec($curl);
-        
-        curl_close($curl);
-        echo $response;
-        
-        // return $this->indexacaoNoticiasTrait($dados_decodificados);
+        $json_file = file_get_contents($arquivo);
+        $dados = $this->verificaJsonTrait($json_file);
+        $json_verificado = $dados->getOriginalContent();
+                
+        if($json_verificado['status']){
+            
+            $dados_tratados = $this->verificaCamposNoticiasTrait($json_verificado['noticias']); 
+            $response = $this->importaNoticiasApiTrait($dados_tratados); 
+            
+            return redirect()
+                    ->back()
+                    ->with('errors', $response['msg']);
+
+        }else{
+            return redirect()
+                    ->back()
+                    ->with('errors', $json_verificado['error_json']);
+        }
 
     }
 

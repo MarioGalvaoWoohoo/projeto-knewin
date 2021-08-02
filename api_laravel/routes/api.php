@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['prefix' => 'indexacao'], function(){
+Route::group(['prefix' => 'noticias'], function(){
     Route::post('/recebeNoticias', 'NoticiaController@recebeNoticiasAPI')->name("recebe.noticias");
-    // Route::post('/register', 'DoctorController@registerDoctorAPI');
+    Route::get('/listarNoticias', 'NoticiaController@getNoticiasAPI')->name("lista.noticias");
 });

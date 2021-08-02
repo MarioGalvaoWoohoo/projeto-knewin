@@ -10,39 +10,20 @@ class ElasticSearchController extends Controller
 {
     public function index()
     {
-        // $client = ClientBuilder::create()->build();
+        $client = ClientBuilder::create()->setHosts(['elasticsearch:9200'])->build();
 
-        $client = ClientBuilder::create()
-            ->setHosts(['elasticsearch:9200'])
-            ->build();
-
-        // $params = [
-        //     'index' => 'my_index',
-        //     'id' => 'my_id',
-        //     'body' => ['testField' => 'abc']
-        //     ];
-
-        // $result = $client->index($params);
-
-        for ($i=0; $i < 100; $i++) { 
-            $params['body'][] = [
-                'index' => [
-                    '_index' => 'my_index',
-                ]
+        $params = [
+            'index' => 'noticias_novas',
+            'id' => 'my_id',
+            'body' => ['testField' => 'abc']
             ];
-            $params['body'][] = [
-                'my_field' => 'my_value',
-                'second_field' => 'some more value'
-            ];
+
+        if(!$client->exists(['index' => 'noticias_novas', 'id' => 'my_id'])){
+            $result = $client->index($params);
+            return json_encode($result);
+        }else{
+            return Response(['status' => "Index já Existe"]);
         }
-        
-        $result = $client->bulk($params);
-        
-        return json_encode($result);
 
-        // dd($result);
-
-
-        return view('elasticSearch/teste');
     }
 }
