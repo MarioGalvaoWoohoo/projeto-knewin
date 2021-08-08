@@ -17,5 +17,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/elastic', 'ElasticSearchController@index')->name('elastic.search');
-Route::get('/listaNoticias', 'NoticiaController@index')->name('lista.noticias');
+
+Route::group(['prefix' => 'elasticsearch'], function(){
+    Route::get('/elastic', 'ElasticSearchController@index')->name('elastic.search');
+    Route::get('/registraNoticiasElastic', 'ElasticSearchController@registraNoticiasElastic')->name('elastic.register');
+});
+
+Route::group(['prefix' => 'postgres'], function(){
+    Route::get('/listaNoticiasApi', 'NoticiaController@getNoticiasAPI')->name('lista.noticiasAPI');
+    Route::get('/registraNoticias', 'NoticiaController@registraNoticiasAPI')->name('registra.noticias');
+    Route::get('/listaNoticias', 'NoticiaController@getNoticiasAll')->name('lista.noticias');
+});
+
+

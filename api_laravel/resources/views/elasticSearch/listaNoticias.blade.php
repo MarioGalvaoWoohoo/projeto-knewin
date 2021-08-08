@@ -76,29 +76,31 @@
         <div class="flex-center position-ref full-height">
             <div class="content">
                 <div class="title m-b-md">
-                           API - Noticias <br> Listagem completa de notícias
+                           ElasticSearch - Noticias <br> Listagem completa de notícias
                 </div>
 
                 <div class="links">
                     <a href="{{ route('elastic.search') }}">Elastic Search</a>
                     <a href="{{ route('lista.noticias') }}">Noticias Postgres</a>
                 </div>
-                <table class="table comBordaSimples">
+                <table class="table table-bordered">
                     <tr>
+                        <td><b>Id</b></td>    
                         <td><b>Titulo</b></td>
                         <td><b>Subtitulo</b></td>
                         <td><b>Fonte</b></td>
+                        <td><b>Conteudo</b></td>
                         <td><b>URL</b></td>
-                        <td><b>Publicação</b></td>
                     </tr>
                     
-                    @foreach ($noticias as $noticia)
+                    @foreach ($noticias['hits']['hits'] as $noticia)
                         <tr>
-                            <td>{{ $noticia->titulo }}</td>
-                            <td>{{ $noticia->subtitulo }}</td>
-                            <td>{{ $noticia->fonte }}</td>
-                            <td>{{ $noticia->url }}</td>
-                            <td>{{ $noticia->data_publicacao }}</td>
+                            <td>{{$noticia['_id']}}</td>
+                            <td>{{$noticia['_source']['titulo']}}</td>
+                            <td>{{$noticia['_source']['subtitulo']}}</td>
+                            <td>{{$noticia['_source']['fonte']}}</td>
+                            <td>{{$noticia['_source']['conteudo']}}</td>
+                            <td>{{$noticia['_source']['url']}}</td>
                         </tr>
                     @endforeach
                 </table>
@@ -106,3 +108,4 @@
         </div>
     </body>
 </html>
+

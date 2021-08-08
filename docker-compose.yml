@@ -23,18 +23,20 @@ services:
         - 9200:9200
       networks: 
           - observability
-
+      
     app:
       build: .
       container_name: app
-      entrypoint: dockerize -wait tcp://postgres:5432 -timeout 20s ./docker/entrypoint.sh
+      entrypoint: dockerize -wait tcp://elasticsearch:9200 -timeout 40s ./docker/entrypoint.sh
       volumes: 
         - ./api_laravel:/var/www
       networks: 
         - observability
+      depends_on: 
+        - elasticsearch
 
     nginx:
-      build: ./docker/nginx
+      build: ./api_laravel/docker/nginx
       container_name: nginx
       restart: always
       tty: true

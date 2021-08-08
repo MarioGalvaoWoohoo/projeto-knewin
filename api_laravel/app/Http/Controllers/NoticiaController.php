@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Elasticsearch\Client;
 use Illuminate\Http\Request;
-use Elasticsearch\ClientBuilder;
 use App\Traits\NoticiaServiceTrait;
 
 class NoticiaController extends Controller
@@ -12,35 +11,17 @@ class NoticiaController extends Controller
 
     use NoticiaServiceTrait;
 
-    protected $elasticParams = [];
-    private $client;
-
-    public function __construct(Client $client)
-    {
-        $this->client = $client;
-
-        $client = ClientBuilder::create()->setHosts(['elasticsearch:9200'])->build();
-        
-        $this->elasticParams['index'] = env('ES_INDEX');
-        $this->elasticParams['type'] = 'noticias';
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $noticias = $this->client->search(['index' => env('ES_INDEX'), 'type' => 'noticias']);
-        die();
-        return view('noticias/listaNoticias', compact('noticias'));
-    }
-
-    
     public function getNoticiasAPI()
     {
-        return $this->getAllNewsTrait();
+        return Response($this->getAllNewsTrait());
+    }
+
+    public function getNoticiasAll()
+    {
+        $noticias = $this->getAllNewsTrait();
+
+        return view('noticias/listaNoticias', ['noticias' => $noticias]);
+        
     }
 
     /**
@@ -49,7 +30,7 @@ class NoticiaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function recebeNoticiasAPI(Request $request)
+    public function registraNoticiasAPI(Request $request)
     {
         $noticias = $request->all();
         

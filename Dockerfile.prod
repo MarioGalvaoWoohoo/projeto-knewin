@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-alpine
+FROM php:7.4-fpm-alpine AS build
 
 RUN apk add --no-cache \ 
     openssl \ 
@@ -45,3 +45,14 @@ EXPOSE 9000
 
 ENTRYPOINT ["php-fpm"]
 
+# Multostage Building
+FROM php:7.4-fpm-alpine
+WORKDIR /var/www
+RUN rm -rf /var/www/html
+
+COPY --from=build /var/www .
+RUN chown -R www-data:www-data /var/www
+
+EXPOSE 9000
+
+ENTRYPOINT ["php-fpm"]

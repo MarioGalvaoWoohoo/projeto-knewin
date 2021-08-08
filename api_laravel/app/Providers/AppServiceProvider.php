@@ -19,9 +19,8 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(TelescopeServiceProvider::class);
         }
 
-        $this->app->bind(Elastic::class, function ($app) {
-            $client = ClientBuilder::create()
-                ->build();
+        $this->app->bind(Client::class, function ($app) {
+            $client = ClientBuilder::create()->setHosts(['elasticsearch:9200'])->build();
             return $client;
         });
     }
